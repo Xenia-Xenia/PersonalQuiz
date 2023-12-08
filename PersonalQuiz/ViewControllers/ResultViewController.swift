@@ -29,17 +29,23 @@ private extension ResultViewController {
     }
     
     func getResult() {
-        var frequentAnswers: [Animal: Int] = [:]
+        var frequencyOfAnswers: [Animal: Int] = [:]
+        let answers = results.map { $0.animal }
         
-        let resultType = results.map { $0.animal }
-        
-        for result in resultType {
-            frequentAnswers[result] = (frequentAnswers[result] ?? 0) + 1
+        for answer in answers {
+            if let answerTypeCount = frequencyOfAnswers[answer] {
+                frequencyOfAnswers[answer, default: 0] += 1
+            }
+            
+            let sortedFrequencyOfAnswers = frequencyOfAnswers.sorted { $0.value > $1.value }
+            guard let mostFrequentAnswer = sortedFrequencyOfAnswers.first?.key else { return }
+            
+            updateUI(with: mostFrequentAnswer)
         }
         
-        let mostCommonAnswer = frequentAnswers.sorted { $0.1 > $1.1 }.first!.key
-        
-        resultLabel.text = "Вы - \(mostCommonAnswer.rawValue)"
-        resultDefinition.text = "\(mostCommonAnswer.definition)"
+        func updateUI(with animal: Animal) {
+            resultLabel.text = "Вы - \(animal.rawValue)"
+            resultDefinition.text = "\(animal.definition)"
+        }
     }
 }
